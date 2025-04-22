@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinLink Directory</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #fceabb, #f8b500);
+      color: #333;
+    }
+    header {
+      background: #ff9800;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 2em;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .container {
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .form-section {
+      background: #fff3e0;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    .form-section input[type="text"],
+    .form-section input[type="url"],
+    .form-section input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .form-section button {
+      padding: 12px 20px;
+      border: none;
+      background-color: #ff9800;
+      color: white;
+      font-size: 1em;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .form-section button:hover {
+      background-color: #f57c00;
+    }
+    .search-bar {
+      margin-bottom: 20px;
+    }
+    .search-bar input {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .link-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+    .link-card:hover {
+      transform: translateY(-5px);
+    }
+    .link-card img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .link-card h3 {
+      margin: 10px 0;
+      font-size: 1.1em;
+    }
+    .link-card a {
+      text-decoration: none;
+      color: #ffffff;
+      background: #ff9800;
+      padding: 8px 16px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-top: 10px;
+    }
+    .link-card a:hover {
+      background-color: #f57c00;
+    }
+  </style>
+</head>
+<body>
+  <header>FinLink Directory</header>
+  <div class="container">
+    <div class="form-section">
+      <h2>Add a New Link</h2>
+      <input type="text" id="linkTitle" placeholder="Enter title for your link" />
+      <input type="url" id="linkURL" placeholder="Enter the full URL (e.g., https://example.com)" />
+      <input type="file" id="linkImage" accept="image/*" />
+      <button onclick="addLink()">Add Link</button>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search links by title..." oninput="searchLinks()" />
+    </div>
+
+    <div id="linkList" class="link-grid"></div>
+  </div>
+
+  <script>
+    let links = JSON.parse(localStorage.getItem('finLinks')) || [];
+
+    function addLink() {
+      const title = document.getElementById('linkTitle').value;
+      const url = document.getElementById('linkURL').value;
+      const imageInput = document.getElementById('linkImage');
+      const reader = new FileReader();
+
+      if (!title || !url || !imageInput.files[0]) {
+        alert('Please fill out all fields.');
+        return;
+      }
+
+      reader.onload = function (e) {
+        const newLink = {
+          title,
+          url,
+          image: e.target.result
+        };
+        links.push(newLink);
+        localStorage.setItem('finLinks', JSON.stringify(links));
+        displayLinks();
+        document.getElementById('linkTitle').value = '';
+        document.getElementById('linkURL').value = '';
+        document.getElementById('linkImage').value = '';
+      };
+
+      reader.readAsDataURL(imageInput.files[0]);
+    }
+
+    function displayLinks(filter = '') {
+      const list = document.getElementById('linkList');
+      list.innerHTML = '';
+
+      links
+        .filter(link => link.title.toLowerCase().includes(filter.toLowerCase()))
+        .forEach(link => {
+          const card = document.createElement('div');
+          card.className = 'link-card';
+
+          card.innerHTML = `
+            <img src="${link.image}" alt="${link.title}" />
+            <h3>${link.title}</h3>
+            <a href="${link.url}" target="_blank">Visit Link</a>
+          `;
+
+          list.appendChild(card);
+        });
+    }
+
+    function searchLinks() {
+      const keyword = document.getElementById('searchInput').value;
+      displayLinks(keyword);
+    }
+
+    // Initial display on load
+    displayLinks();
+  </script>
+</body>
+</html>
