@@ -3,183 +3,204 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FinLink Directory</title>
+  <title>LinkHub Admin</title>
   <style>
     body {
-      font-family: 'Poppins', sans-serif;
+      background-color: #121212;
+      color: #f1f1f1;
+      font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 0;
-      background: linear-gradient(to right, #fceabb, #f8b500);
-      color: #333;
     }
     header {
-      background: #ff9800;
+      background-color: #1f1f1f;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #333;
+    }
+    .toggle-btn {
+      background-color: #3b82f6;
       color: white;
-      padding: 20px;
-      text-align: center;
-      font-size: 2em;
-      font-weight: bold;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-    .container {
-      padding: 20px;
-      max-width: 1200px;
-      margin: auto;
-    }
-    .form-section {
-      background: #fff3e0;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 30px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    }
-    .form-section input[type="text"],
-    .form-section input[type="url"],
-    .form-section input[type="file"] {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    .form-section button {
-      padding: 12px 20px;
       border: none;
-      background-color: #ff9800;
-      color: white;
-      font-size: 1em;
-      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
       cursor: pointer;
     }
-    .form-section button:hover {
-      background-color: #f57c00;
+    .admin-section {
+      display: none;
+      padding: 1rem;
+      background-color: #1a1a1a;
     }
-    .search-bar {
-      margin-bottom: 20px;
-    }
-    .search-bar input {
-      width: 100%;
-      padding: 10px;
-      font-size: 1em;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    .link-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
+    .link-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 1rem;
     }
     .link-card {
-      background: #ffffff;
-      border-radius: 12px;
-      padding: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      text-align: center;
-      transition: transform 0.2s ease;
-    }
-    .link-card:hover {
-      transform: translateY(-5px);
+      background-color: #2a2a2a;
+      border-radius: 10px;
+      padding: 1rem;
+      width: 300px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
     .link-card img {
-      width: 100px;
-      height: 100px;
+      width: 100%;
+      height: 150px;
       object-fit: cover;
       border-radius: 8px;
     }
-    .link-card h3 {
-      margin: 10px 0;
-      font-size: 1.1em;
+    .search-bar {
+      margin: 1rem;
+      padding: 0.5rem;
+      width: calc(100% - 2rem);
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
     }
-    .link-card a {
-      text-decoration: none;
-      color: #ffffff;
-      background: #ff9800;
-      padding: 8px 16px;
-      border-radius: 6px;
-      display: inline-block;
-      margin-top: 10px;
+    .comment-section {
+      margin-top: 1rem;
     }
-    .link-card a:hover {
-      background-color: #f57c00;
+    .comment {
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      background: #3a3a3a;
+      border-radius: 5px;
+    }
+    input, textarea {
+      width: 100%;
+      margin: 0.3rem 0;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 5px;
+      background: #2a2a2a;
+      color: white;
+    }
+    button {
+      padding: 0.5rem;
+      background-color: #06d6a0;
+      border: none;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <header>FinLink Directory</header>
-  <div class="container">
-    <div class="form-section">
-      <h2>Add a New Link</h2>
-      <input type="text" id="linkTitle" placeholder="Enter title for your link" />
-      <input type="url" id="linkURL" placeholder="Enter the full URL (e.g., https://example.com)" />
-      <input type="file" id="linkImage" accept="image/*" />
-      <button onclick="addLink()">Add Link</button>
-    </div>
+  <header>
+    <h1>LinkHub</h1>
+    <button class="toggle-btn" onclick="requestAccess()">Add Link</button>
+  </header>
 
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Search links by title..." oninput="searchLinks()" />
-    </div>
+  <input class="search-bar" id="searchInput" placeholder="Search links by name..." oninput="filterLinks()" />
 
-    <div id="linkList" class="link-grid"></div>
+  <div class="admin-section" id="adminSection">
+    <input type="text" id="title" placeholder="Enter Link Name" />
+    <input type="url" id="url" placeholder="Enter Direct Link" />
+    <input type="file" id="image" accept="image/*" />
+    <button onclick="addLink()">Add Link</button>
   </div>
 
+  <div class="link-list" id="linkList"></div>
+
   <script>
-    let links = JSON.parse(localStorage.getItem('finLinks')) || [];
+    let links = JSON.parse(localStorage.getItem("links")) || [];
+
+    function requestAccess() {
+      let code = prompt("Enter admin code:");
+      if (code === "22414") {
+        document.getElementById("adminSection").style.display = 'block';
+      } else {
+        alert("Access Denied");
+      }
+    }
 
     function addLink() {
-      const title = document.getElementById('linkTitle').value;
-      const url = document.getElementById('linkURL').value;
-      const imageInput = document.getElementById('linkImage');
+      const title = document.getElementById("title").value;
+      const url = document.getElementById("url").value;
+      const imageFile = document.getElementById("image").files[0];
       const reader = new FileReader();
 
-      if (!title || !url || !imageInput.files[0]) {
-        alert('Please fill out all fields.');
-        return;
-      }
-
-      reader.onload = function (e) {
-        const newLink = {
-          title,
-          url,
-          image: e.target.result
+      reader.onloadend = () => {
+        const imageData = reader.result;
+        const linkObj = {
+          title, url, image: imageData, comments: []
         };
-        links.push(newLink);
-        localStorage.setItem('finLinks', JSON.stringify(links));
+        links.push(linkObj);
+        localStorage.setItem("links", JSON.stringify(links));
         displayLinks();
-        document.getElementById('linkTitle').value = '';
-        document.getElementById('linkURL').value = '';
-        document.getElementById('linkImage').value = '';
       };
 
-      reader.readAsDataURL(imageInput.files[0]);
+      if (imageFile) reader.readAsDataURL(imageFile);
     }
 
-    function displayLinks(filter = '') {
-      const list = document.getElementById('linkList');
-      list.innerHTML = '';
-
-      links
-        .filter(link => link.title.toLowerCase().includes(filter.toLowerCase()))
-        .forEach(link => {
-          const card = document.createElement('div');
-          card.className = 'link-card';
-
-          card.innerHTML = `
-            <img src="${link.image}" alt="${link.title}" />
-            <h3>${link.title}</h3>
-            <a href="${link.url}" target="_blank">Visit Link</a>
-          `;
-
-          list.appendChild(card);
-        });
+    function displayLinks() {
+      const container = document.getElementById("linkList");
+      container.innerHTML = "";
+      links.forEach((link, index) => {
+        const div = document.createElement("div");
+        div.className = "link-card";
+        div.innerHTML = `
+          <img src="${link.image}" />
+          <h3>${link.title}</h3>
+          <a href="${link.url}" target="_blank">Visit</a>
+          <div class="comment-section">
+            <h4>Comments:</h4>
+            <div id="comments-${index}">
+              ${link.comments.map(c => `<div class='comment'><b>${c.name}:</b> ${c.text}</div>`).join('')}
+            </div>
+            <input placeholder="Your Name" id="cname-${index}" />
+            <textarea placeholder="Your Comment" id="ctext-${index}"></textarea>
+            <button onclick="addComment(${index})">Send</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
     }
 
-    function searchLinks() {
-      const keyword = document.getElementById('searchInput').value;
-      displayLinks(keyword);
+    function addComment(index) {
+      const name = document.getElementById(`cname-${index}`).value;
+      const text = document.getElementById(`ctext-${index}`).value;
+      if (name && text) {
+        links[index].comments.push({ name, text });
+        localStorage.setItem("links", JSON.stringify(links));
+        displayLinks();
+      }
     }
 
-    // Initial display on load
+    function filterLinks() {
+      const term = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = links.filter(link => link.title.toLowerCase().includes(term));
+      const container = document.getElementById("linkList");
+      container.innerHTML = "";
+      filtered.forEach((link, index) => {
+        const div = document.createElement("div");
+        div.className = "link-card";
+        div.innerHTML = `
+          <img src="${link.image}" />
+          <h3>${link.title}</h3>
+          <a href="${link.url}" target="_blank">Visit</a>
+          <div class="comment-section">
+            <h4>Comments:</h4>
+            <div id="comments-${index}">
+              ${link.comments.map(c => `<div class='comment'><b>${c.name}:</b> ${c.text}</div>`).join('')}
+            </div>
+            <input placeholder="Your Name" id="cname-${index}" />
+            <textarea placeholder="Your Comment" id="ctext-${index}"></textarea>
+            <button onclick="addComment(${index})">Send</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
     displayLinks();
   </script>
 </body>
 </html>
+
+
+    
